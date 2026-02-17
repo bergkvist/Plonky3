@@ -43,7 +43,7 @@ where
         }
         let post = self.inner_permutation.permute(pre);
         let post_arr: [T; CHUNK] = post[..CHUNK].try_into().unwrap();
-        post_arr.into()
+        post_arr
     }
 }
 

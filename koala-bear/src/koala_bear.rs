@@ -5,7 +5,7 @@ use core::ops::{Add, AddAssign, Div, Mul, MulAssign, Neg, Sub, SubAssign};
 use num_bigint::BigUint;
 use p3_field::{
     exp_1420470955, exp_u64_by_squaring, halve_u32, AbstractField, Field, Packable, PrimeField,
-    PrimeField32, PrimeField64, TwoAdicField, PrimeField31
+    PrimeField31, PrimeField32, PrimeField64, TwoAdicField,
 };
 use rand::distributions::{Distribution, Standard};
 use rand::Rng;
@@ -352,7 +352,7 @@ impl Sum for KoalaBear {
         // There might be a faster reduction method possible for lengths <= 16 which avoids %.
 
         // This sum will not overflow so long as iter.len() < 2^33.
-        let sum = iter.map(|x| (x.value as u64)).sum::<u64>();
+        let sum = iter.map(|x| x.value as u64).sum::<u64>();
         Self {
             value: (sum % P as u64) as u32,
         }

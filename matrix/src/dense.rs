@@ -146,7 +146,7 @@ impl<T: Clone + Send + Sync, S: DenseStorage<T>> DenseMatrix<T, S> {
         sfx.iter_mut().for_each(|x| *x *= scale);
     }
 
-    pub fn split_rows(&self, r: usize) -> (RowMajorMatrixView<T>, RowMajorMatrixView<T>) {
+    pub fn split_rows(&self, r: usize) -> (RowMajorMatrixView<'_, T>, RowMajorMatrixView<'_, T>) {
         let (lo, hi) = self.values.borrow().split_at(r * self.width);
         (
             DenseMatrix::new(lo, self.width),
@@ -157,7 +157,7 @@ impl<T: Clone + Send + Sync, S: DenseStorage<T>> DenseMatrix<T, S> {
     pub fn split_rows_mut(
         &mut self,
         r: usize,
-    ) -> (RowMajorMatrixViewMut<T>, RowMajorMatrixViewMut<T>)
+    ) -> (RowMajorMatrixViewMut<'_, T>, RowMajorMatrixViewMut<'_, T>)
     where
         S: BorrowMut<[T]>,
     {
@@ -171,7 +171,7 @@ impl<T: Clone + Send + Sync, S: DenseStorage<T>> DenseMatrix<T, S> {
     pub fn par_row_chunks_mut(
         &mut self,
         chunk_rows: usize,
-    ) -> impl IndexedParallelIterator<Item = RowMajorMatrixViewMut<T>>
+    ) -> impl IndexedParallelIterator<Item = RowMajorMatrixViewMut<'_, T>>
     where
         T: Send,
         S: BorrowMut<[T]>,
@@ -185,7 +185,7 @@ impl<T: Clone + Send + Sync, S: DenseStorage<T>> DenseMatrix<T, S> {
     pub fn par_row_chunks_exact_mut(
         &mut self,
         chunk_rows: usize,
-    ) -> impl IndexedParallelIterator<Item = RowMajorMatrixViewMut<T>>
+    ) -> impl IndexedParallelIterator<Item = RowMajorMatrixViewMut<'_, T>>
     where
         T: Send,
         S: BorrowMut<[T]>,

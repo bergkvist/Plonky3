@@ -1,42 +1,7 @@
-use alloc::vec::Vec;
-
-use p3_air::{Air, AirBuilder, AirBuilderWithPublicValues};
+use p3_air::{AirBuilder, AirBuilderWithPublicValues};
 use p3_field::Field;
-use p3_matrix::dense::{RowMajorMatrix, RowMajorMatrixView};
+use p3_matrix::dense::RowMajorMatrixView;
 use p3_matrix::stack::VerticalPair;
-use p3_matrix::Matrix;
-use tracing::instrument;
-
-#[instrument(name = "check constraints", skip_all)]
-pub(crate) fn check_constraints<F, A>(air: &A, main: &RowMajorMatrix<F>, public_values: &Vec<F>)
-where
-    F: Field,
-    A: for<'a> Air<DebugConstraintBuilder<'a, F>>,
-{
-    let height = main.height();
-
-    (0..height).for_each(|i| {
-        let i_next = (i + 1) % height;
-
-        let local = main.row_slice(i);
-        let next = main.row_slice(i_next);
-        let main = VerticalPair::new(
-            RowMajorMatrixView::new_row(&*local),
-            RowMajorMatrixView::new_row(&*next),
-        );
-
-        let mut builder = DebugConstraintBuilder {
-            row_index: i,
-            main,
-            public_values,
-            is_first_row: F::from_bool(i == 0),
-            is_last_row: F::from_bool(i == height - 1),
-            is_transition: F::from_bool(i != height - 1),
-        };
-
-        air.eval(&mut builder);
-    });
-}
 
 /// An `AirBuilder` which asserts that each constraint is zero, allowing any failed constraints to
 /// be detected early.

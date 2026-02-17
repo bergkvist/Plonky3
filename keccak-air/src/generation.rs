@@ -24,6 +24,8 @@ pub fn generate_trace_rows<F: PrimeField64>(inputs: Vec<[u64; 25]>) -> RowMajorM
     assert_eq!(rows.len(), num_rows);
 
     let num_padding_inputs = ceil_div_usize(num_rows, NUM_ROUNDS) - inputs.len();
+
+    #[allow(clippy::manual_repeat_n)]
     let padded_inputs = inputs
         .into_par_iter()
         .chain(repeat([0; 25]).take(num_padding_inputs));

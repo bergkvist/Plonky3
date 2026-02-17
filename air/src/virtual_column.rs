@@ -1,9 +1,9 @@
 use alloc::vec;
 use alloc::vec::Vec;
 use core::ops::Mul;
-use serde::{Deserialize, Serialize};
 
 use p3_field::{AbstractField, Field};
+use serde::{Deserialize, Serialize};
 
 /// An affine function over columns in a PAIR.
 #[derive(Clone, Debug)]
@@ -21,7 +21,7 @@ pub enum PairCol {
 
 impl PartialOrd for PairCol {
     fn partial_cmp(&self, other: &Self) -> Option<core::cmp::Ordering> {
-        Some(self.cmp(other))
+        Some(std::cmp::Ord::cmp(self, other))
     }
 }
 
@@ -139,11 +139,11 @@ impl<F: Field> VirtualPairCol<F> {
     {
         let mut result = self.constant.into();
         for (column, weight) in self.column_weights.iter() {
-            if *weight != F::one() {
-                result = result + column.get(preprocessed, main).into() * *weight;
+            result += if *weight != F::one() {
+                column.get(preprocessed, main).into() * *weight
             } else {
-                result = result + column.get(preprocessed, main).into();
-            }
+                column.get(preprocessed, main).into()
+            };
         }
         result
     }
